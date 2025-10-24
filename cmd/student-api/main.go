@@ -11,6 +11,7 @@ import (
 	"context"
 	"time"
 	"log/slog"
+	"github.com/CodeMaverick-143/Golang_learning/internal/http/handlers/student"
 )
 
 func main(){
@@ -28,9 +29,7 @@ func main(){
 
 	router:= http.NewServeMux()
 
-	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request){
-		w.Write([]byte("welcome to student api"))
-	})
+	router.Handle("POST /api/students", student.New())
 
 
 
@@ -44,7 +43,7 @@ func main(){
 
     fmt.Println("Server started on", cfg.HTTPServer.Address)
 
-	done := make(chan os.signal,1)
+	done := make(chan os.Signal, 1)
 
 	signal.Notify(done , os.Interrupt,syscall.SIGTERM,syscall.SIGINT)
 
@@ -64,8 +63,8 @@ func main(){
 
 	defer cancel()
 
-	err := server.Shutdown(ctx); err != nil{
-		slog.Error("Failed to shutdown server",slog.String("error",err.Error()))
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("Failed to shutdown server", slog.String("error", err.Error()))
 	}
 
 	slog.Info("Server shutdown successfully")
