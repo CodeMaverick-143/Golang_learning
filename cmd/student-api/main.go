@@ -1,17 +1,18 @@
 package main 
 
 import (
-	"fmt"
-	"github.com/CodeMaverick-143/Golang_learning/internal/config"
-	"net/http"
-	"log"
-	"os"
-	"os/signal"
-	"syscall"
-	"context"
-	"time"
-	"log/slog"
-	"github.com/CodeMaverick-143/Golang_learning/internal/http/handlers/student"
+    "context"
+    "log"
+    "log/slog"
+    "net/http"
+    "os"
+    "os/signal"
+    "syscall"
+    "time"
+
+    "github.com/CodeMaverick-143/Golang_learning/internal/config"
+    "github.com/CodeMaverick-143/Golang_learning/internal/http/handlers/student"
+    "github.com/CodeMaverick-143/Golang_learning/internal/storage/sqlite"
 )
 
 func main(){
@@ -22,6 +23,17 @@ func main(){
 
 
 	//database setup 
+    storage, err := sqlite.New(cfg)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    slog.Info("Database setup successfully",
+        slog.String("env", cfg.Env),
+        slog.String("storage_path", cfg.StoragePath),
+        slog.String("http_address", cfg.HTTPServer.Address),
+        slog.String("version", "1.0.0"),
+    )
 
 
 
@@ -29,19 +41,22 @@ func main(){
 
 	router:= http.NewServeMux()
 
-	router.Handle("POST /api/students", student.New())
+	router.Handle("POST /api/students", student.New(storage))
 
 
 
 	// setup server
 
-	server:= http.Server{
-		Addr: cfg.HTTPServer.Address,
-		Handler: router,
-	}
+    server:= http.Server{
+        Addr: cfg.HTTPServer.Address,
+        Handler: router,
+    }
 
-
-    fmt.Println("Server started on", cfg.HTTPServer.Address)
+    slog.Info("Server started",
+        slog.String("env", cfg.Env),
+        slog.String("storage_path", cfg.StoragePath),
+        slog.String("http_address", cfg.HTTPServer.Address),
+    )
 
 	done := make(chan os.Signal, 1)
 
