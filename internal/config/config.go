@@ -1,4 +1,4 @@
-package Config
+package config
 import (
 	"flag"
 	"log"
@@ -7,7 +7,7 @@ import (
 )
 
 type HTTPserver struct{
-	Address string
+	Address string `yaml:"address" env-required:"true"`
 
 }
 

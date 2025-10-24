@@ -42,5 +42,3 @@ debug
 # Air (live reload tool)
 tmp/
 storage/
-
-/config
