@@ -8,7 +8,7 @@ import (
     "net/http"
     "strconv"
 
-    "github.com/CodeMaverick-143/Golang_learning/internal/storage"
+    storagepkg "github.com/CodeMaverick-143/Golang_learning/internal/storage"
     "github.com/CodeMaverick-143/Golang_learning/internal/types"
     "github.com/CodeMaverick-143/Golang_learning/internal/utils/response"
     "github.com/go-playground/validator/v10"
@@ -16,7 +16,7 @@ import (
 
 //Create 
 
-func New(storage storage.Storage) http.Handler {
+func New(storage storagepkg.Storage) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
         slog.Info("Creating a new student")
 
@@ -56,6 +56,32 @@ func New(storage storage.Storage) http.Handler {
 }
 
 //Read
+
+func GetByID(storage storagepkg.Storage) http.Handler {
+    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+        idParam := r.PathValue("id")
+        slog.Info("Getting a student by id", slog.String("id", idParam))
+
+        studentID, err := strconv.ParseInt(idParam, 10, 64)
+        if err != nil {
+            _ = response.WriteJSON(w, http.StatusBadRequest, response.GeneralError(err))
+            return
+        }
+
+        student, err := storage.GetStudentById(studentID)
+        if err != nil {
+            if errors.Is(err, storagepkg.ErrNotFound) {
+                _ = response.WriteJSON(w, http.StatusNotFound, response.GeneralError(err))
+                return
+            }
+
+            _ = response.WriteJSON(w, http.StatusInternalServerError, response.GeneralError(err))
+            return
+        }
+
+        _ = response.WriteJSON(w, http.StatusOK, student)
+    })
+}
 
 //Update
 

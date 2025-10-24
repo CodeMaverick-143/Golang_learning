@@ -42,6 +42,8 @@ func main(){
 	router:= http.NewServeMux()
 
 	router.Handle("POST /api/students", student.New(storage))
+	router.Handle("GET /api/students/{id}", student.GetByID(storage))
+	
 
 
 
