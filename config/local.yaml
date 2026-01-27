@@ -1,5 +1,5 @@
 env: "dev"
 storage_path: "storage/storage.db"
 http_server:
-  address: "localhost:8082"
+  address: "0.0.0.0:8082"
 postgres_dsn: "postgresql://neondb_owner:npg_1mGx0JRjwgiS@ep-falling-shape-ahrrb798-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
