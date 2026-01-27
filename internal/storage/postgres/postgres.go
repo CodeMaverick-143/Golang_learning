@@ -61,3 +61,13 @@ func (s *Postgres) GetStudentById(id int64) (types.Student, error) {
 	}
 	return student, nil
 }
+
+func (s *Postgres) UpdateStudent(id int64, name string, email string, age int) error {
+	_, err := s.Db.Exec(`UPDATE students SET name = $1, email = $2, age = $3 WHERE id = $4`, name, email, age, id)
+	return err
+}
+
+func (s *Postgres) DeleteStudent(id int64) error {
+	_, err := s.Db.Exec(`DELETE FROM students WHERE id = $1`, id)
+	return err
+}

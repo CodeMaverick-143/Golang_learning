@@ -58,6 +58,8 @@ func main() {
 
 	router.Handle("POST /api/students", student.New(storage))
 	router.Handle("GET /api/students/{id}", student.GetByID(storage))
+	router.Handle("PUT /api/students/{id}", student.Update(storage))
+	router.Handle("DELETE /api/students/{id}", student.Delete(storage))
 	router.Handle("GET /health", health.New())
 
 	// setup server

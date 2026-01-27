@@ -9,8 +9,8 @@ import (
 
 	"github.com/CodeMaverick-143/Golang_learning/internal/config"
 	"github.com/CodeMaverick-143/Golang_learning/internal/storage"
-	_ "github.com/mattn/go-sqlite3"
 	"github.com/CodeMaverick-143/Golang_learning/internal/types"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type Sqlite struct {
@@ -55,21 +55,21 @@ func (s *Sqlite) CreateStudent(name string, email string, age int) (int64, error
 	if err != nil {
 		return 0, err
 	}
-	
+
 	defer stmt.Close()
 
 	result, err := stmt.Exec(name, email, age)
 	if err != nil {
 		return 0, err
 	}
-	
+
 	lastId, err := result.LastInsertId()
 	if err != nil {
 		return 0, err
 	}
 
 	return lastId, nil
-	
+
 }
 
 func (s *Sqlite) GetStudentById(id int64) (types.Student, error) {
@@ -91,4 +91,14 @@ func (s *Sqlite) GetStudentById(id int64) (types.Student, error) {
 	}
 
 	return student, nil
+}
+
+func (s *Sqlite) UpdateStudent(id int64, name string, email string, age int) error {
+	_, err := s.Db.Exec(`UPDATE students SET name = ?, email = ?, age = ? WHERE id = ?`, name, email, age, id)
+	return err
+}
+
+func (s *Sqlite) DeleteStudent(id int64) error {
+	_, err := s.Db.Exec(`DELETE FROM students WHERE id = ?`, id)
+	return err
 }
