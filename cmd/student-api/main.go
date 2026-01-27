@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/CodeMaverick-143/Golang_learning/internal/config"
+	"github.com/CodeMaverick-143/Golang_learning/internal/http/handlers/health"
 	"github.com/CodeMaverick-143/Golang_learning/internal/http/handlers/student"
 	"github.com/CodeMaverick-143/Golang_learning/internal/storage"
 	"github.com/CodeMaverick-143/Golang_learning/internal/storage/postgres"
@@ -20,7 +21,7 @@ import (
 func main() {
 	// load config
 	cfg := config.MustLoad()
-	
+
 	port := os.Getenv("PORT")
 	if port != "" {
 		cfg.HTTPServer.Address = "0.0.0.0:" + port
@@ -57,6 +58,7 @@ func main() {
 
 	router.Handle("POST /api/students", student.New(storage))
 	router.Handle("GET /api/students/{id}", student.GetByID(storage))
+	router.Handle("GET /health", health.New())
 
 	// setup server
 
