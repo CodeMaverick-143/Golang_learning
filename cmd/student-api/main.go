@@ -20,6 +20,11 @@ import (
 func main() {
 	// load config
 	cfg := config.MustLoad()
+	
+	port := os.Getenv("PORT")
+	if port != "" {
+		cfg.HTTPServer.Address = "0.0.0.0:" + port
+	}
 
 	//database setup
 	var storage storage.Storage
